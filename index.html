@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#111a20">
+<title>长官商行｜三角洲账号租赁</title>
+<style>
+:root{--bg:#10171c;--panel:#182329;--panel2:#202e35;--line:#304149;--text:#edf2ee;--muted:#9caaa8;--green:#a8c28a;--gold:#d7bd78;--red:#d77d70}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Microsoft YaHei",sans-serif}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}button{cursor:pointer}
+.wrap{width:min(1080px,calc(100% - 28px));margin:auto}
+header{position:sticky;top:0;background:#111a20ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line);z-index:5}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}.brand{font-weight:800;letter-spacing:1px;color:var(--gold);font-size:19px}
+.navlinks{display:flex;gap:8px;flex-wrap:wrap}.navlinks button,.btn{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:9px 13px;border-radius:8px}
+.btn.primary{background:var(--green);color:#152018;border-color:var(--green);font-weight:700}.btn.gold{background:var(--gold);color:#201b10;border-color:var(--gold);font-weight:700}.btn.danger{background:#512e2c;border-color:#75413c}
+.hero{padding:34px 0 20px}.eyebrow{color:var(--green);font-size:12px;letter-spacing:2px}.hero h1{font-size:clamp(27px,5vw,42px);line-height:1.15;margin:8px 0}.muted{color:var(--muted)}.toolbar{display:grid;grid-template-columns:1fr 170px 150px;gap:9px;margin:18px 0}
+input,select,textarea{width:100%;padding:11px 12px;background:#0f171c;color:var(--text);border:1px solid var(--line);border-radius:8px;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--green)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:17px;margin:14px 0}.listing{display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:center}.thumb{width:150px;height:112px;object-fit:cover;background:#26343a;border-radius:8px}.placeholder{display:grid;place-items:center;color:var(--muted);font-size:12px}
+.title{font-size:18px;font-weight:750}.tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.tag{font-size:12px;color:#c9d4ca;background:#2a3937;border:1px solid #3c5147;padding:3px 8px;border-radius:5px}.facts{display:flex;gap:15px;flex-wrap:wrap;color:var(--muted);font-size:13px}.price{color:var(--gold);font-weight:750;text-align:right;white-space:nowrap}.price small{display:block;color:var(--muted);font-weight:400}
+section.page{display:none;padding-bottom:50px}section.page.active{display:block}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field label{display:block;font-size:13px;color:#c4d0ca;margin:0 0 6px}.field{margin-bottom:12px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}.full{grid-column:1/-1}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.status{min-height:22px;color:var(--green);font-size:13px;margin-top:8px}.status.error{color:var(--red)}.empty{text-align:center;color:var(--muted);padding:35px;border:1px dashed var(--line);border-radius:10px}
+footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:12px;margin-top:30px}
+@media(max-width:700px){.toolbar{grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1}.listing{grid-template-columns:92px 1fr}.thumb{width:92px;height:92px}.price{grid-column:2;text-align:left}.grid,.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.navlinks button{padding:7px 9px;font-size:12px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><nav><a class="brand" href="#" onclick="showPage('home')">长官商行</a><div class="navlinks">
+<button onclick="showPage('home')">账号大厅</button><button onclick="showPage('publish')">发布账号</button><button onclick="showPage('orders')">租赁说明</button>
+</div></nav></div></header>
+<main class="wrap">
+<section id="home" class="page active">
+<div class="hero"><div class="eyebrow">DELTA FORCE · RENTAL MARKET</div><h1>三角洲账号租赁</h1><div class="muted">精选账号信息 · 租赁价格由双方协商 · 平台审核上架</div></div>
+<div class="toolbar"><input id="search" placeholder="搜索资产、纯币、皮肤、账号标题…" oninput="renderListings()"><select id="region" onchange="renderListings()"><option value="">全部大区</option><option>QQ区</option><option>微信区</option><option>其他</option></select><select id="sort" onchange="renderListings()"><option value="new">最新发布</option><option value="asset">总资产从高到低</option></select></div>
+<div id="listingCount" class="muted"></div><div id="listings"><div class="empty">正在加载账号…</div></div>
+</section>
+
+<section id="publish" class="page">
+<div class="hero"><div class="eyebrow">SELLER CENTER</div><h1>发布租赁账号</h1><div class="muted">登录后提交，审核通过后展示。请勿填写游戏密码、验证码等敏感凭据。</div></div>
+<div class="panel">
+<form id="publishForm">
+<div class="formgrid">
+<div class="field"><label>账号标题 *</label><input name="title" required maxlength="70" placeholder="例如：高资产满配账号"></div>
+<div class="field"><label>号主 QQ（仅管理员可见）*</label><input name="seller_qq" required maxlength="40" placeholder="填写用于管理员联系的 QQ"></div>
+<div class="field"><label>游戏大区 *</label><select name="game_region" required><option value="">请选择</option><option>QQ区</option><option>微信区</option><option>其他</option></select></div>
+<div class="field"><label>总资产</label><input name="total_assets" placeholder="例如：8000万"></div>
+<div class="field"><label>纯币多少</label><input name="pure_coins" placeholder="例如：3000万"></div>
+<div class="field"><label>体力等级</label><input name="stamina_level" placeholder="例如：5级"></div>
+<div class="field"><label>保险格子</label><input name="insurance_slots" placeholder="例如：3×3"></div>
+<div class="field"><label>账号等级</label><input name="account_level" placeholder="例如：60级"></div>
+<div class="field"><label>游戏段位</label><input name="rank" placeholder="例如：战神"></div>
+<div class="field"><label>绝密 KD</label><input name="secret_kd" placeholder="例如：5.2"></div>
+<div class="field"><label>红蛋数量</label><input name="red_items" placeholder="数量或说明"></div>
+<div class="field"><label>6头数量</label><input name="helmet_6" placeholder="数量或说明"></div>
+<div class="field"><label>6甲数量</label><input name="armor_6" placeholder="数量或说明"></div>
+<div class="field"><label>能否帐密交付</label><select name="can_provide_login"><option value="false">否</option><option value="true">可以（按平台安全规则交付）</option></select></div>
+<div class="field"><label>押金（元）</label><input name="deposit" type="number" min="0" step="0.01" placeholder="双方协商时可填 0"></div>
+<div class="field full"><label>有的皮肤</label><textarea name="skins" rows="2" placeholder="填写拥有的稀有皮肤、武器皮肤等"></textarea></div>
+<div class="field full"><label>仓库不能动的东西</label><textarea name="locked_items" rows="2" placeholder="填写租赁期间禁止使用或转移的物品"></textarea></div>
+<div class="field full"><label>租赁价格 / 协商说明</label><textarea name="price_terms" rows="2" placeholder="例如：价格私聊协商；请说明计价单位和最低租期"></textarea></div>
+<div class="field full"><label>账号图片链接（可选）</label><input name="image_url" type="url" placeholder="后续版本可接入图片上传"></div>
+<div class="field full"><label>其他租赁规则</label><textarea name="notes" rows="3" placeholder="续租、使用限制、租期要求等"></textarea></div>
+</div>
+<div class="actions"><button class="btn primary" type="submit">提交审核</button><button class="btn" type="reset">清空</button></div><div id="publishStatus" class="status"></div>
+</form></div>
+</section>
+
+<section id="orders" class="page"><div class="hero"><div class="eyebrow">RENTAL GUIDE</div><h1>租赁说明</h1><div class="muted">无需注册账号即可提交租赁申请。</div></div>
+<div class="panel"><h3>买家下单</h3><p class="muted">在账号卡片中点击「申请租赁」，填写姓名、联系电话和租赁需求即可提交。请妥善保存系统返回的订单编号，后续可凭订单编号联系平台客服查询进度。</p>
+<p class="muted">第一版暂不提供个人订单列表和在线收款；平台确认订单及支付方式后再通知买家。不要在订单备注中填写游戏密码、短信验证码或其他敏感凭据。</p></div>
+<div class="panel"><h3>卖家发布</h3><p class="muted">无需注册即可提交账号。所有新账号先进入审核队列，通过后才会出现在公开大厅。号主 QQ 仅用于后台管理联系，不会展示给买家。</p></div>
+</section>
+
+
+</main>
+<footer><div class="wrap">长官商行 · 三角洲账号租赁 V1.0（免注册版）<br>本平台为独立租赁信息与订单管理服务，非游戏官方平台。请遵守游戏运营方规则，勿发布违规或来源不明的账号。</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// 先在下方填入自己的 Supabase 项目 URL 和 publishable/anon key。
+const SUPABASE_URL="https://gvgmexpycpogednnsqig.supabase.co";
+const SUPABASE_KEY="sb_publishable_5uqtoLBUz8TZzNZEkzqLmg_CeBGpF4w";
+const configured=SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("YOUR_") && !SUPABASE_KEY.includes("YOUR_");
+const db=configured?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+let allListings=[];
+const $=id=>document.getElementById(id);
+function showPage(id){document.querySelectorAll("section.page").forEach(s=>s.classList.toggle("active",s.id===id));if(id==="home")loadListings();}
+function msg(id,text,error=false){$(id).textContent=text;$(id).classList.toggle("error",error);}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function loadListings(){
+ if(!db){$("listings").innerHTML='<div class="empty">网站前端已就绪。请先配置 Supabase URL 和 Publishable Key，再执行配套 SQL。</div>';return;}
+ const {data,error}=await db.from("public_rental_accounts").select("*").order("created_at",{ascending:false});
+ if(error){$("listings").innerHTML='<div class="empty">账号加载失败：'+esc(error.message)+'</div>';return;}
+ allListings=data||[];renderListings();
+}
+function renderListings(){
+ const q=($("search").value||"").toLowerCase(),r=$("region").value,sort=$("sort").value;
+ let rows=allListings.filter(x=>(!r||x.game_region===r)&&JSON.stringify(x).toLowerCase().includes(q));
+ if(sort==="asset")rows.sort((a,b)=>String(b.total_assets||"").localeCompare(String(a.total_assets||""),"zh"));
+ $("listingCount").textContent="共 "+rows.length+" 个账号";
+ if(!rows.length){$("listings").innerHTML='<div class="empty">暂时没有符合条件的账号。</div>';return;}
+ $("listings").innerHTML=rows.map(x=>`<article class="panel listing">
+ ${x.image_url?`<img class="thumb" src="${esc(x.image_url)}" alt="账号截图">`:'<div class="thumb placeholder">账号图片</div>'}
+ <div><div class="title">${esc(x.title)}</div><div class="tags"><span class="tag">${esc(x.game_region||"未填写")}</span><span class="tag">${esc(x.rank||"段位未填写")}</span><span class="tag">${esc(x.insurance_slots||"保险未填写")}</span></div>
+ <div class="facts"><span>总资产：${esc(x.total_assets||"未填写")}</span><span>纯币：${esc(x.pure_coins||"未填写")}</span><span>等级：${esc(x.account_level||"未填写")}</span><span>KD：${esc(x.secret_kd||"未填写")}</span></div></div>
+ <div class="price">价格协商<small>押金：${esc(x.deposit??"协商")}</small><button class="btn" onclick="createOrder('${esc(x.id)}')">申请租赁</button></div>
+ </article>`).join("");
+}
+async function createOrder(id){
+ if(!db){alert("请先配置 Supabase。");return;}
+ const buyerName=prompt("请输入联系人姓名或称呼");if(!buyerName?.trim())return;
+ const buyerPhone=prompt("请输入联系电话（建议含国家区号）");if(!buyerPhone?.trim())return;
+ const buyerQQ=prompt("请输入联系 QQ（选填）")||"";
+ const term=prompt("请输入希望租赁的时间或其他需求（例如：先租 1 天）");if(term===null)return;
+ const orderNo="CG"+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,6).toUpperCase();
+ const {error}=await db.from("rental_orders").insert({order_no:orderNo,account_id:id,buyer_name:buyerName.trim(),buyer_phone:buyerPhone.trim(),buyer_qq:buyerQQ.trim(),request_note:term,status:"pending"});
+ if(error)alert("订单申请失败："+error.message);else alert("租赁申请已提交。请保存订单编号："+orderNo+"。平台确认订单及支付方式后会联系你。");
+}
+$("publishForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!db){msg("publishStatus","请先配置 Supabase。",true);return;}
+ const f=new FormData(e.target),v=Object.fromEntries(f.entries());
+ const payload={title:v.title,seller_qq:v.seller_qq,game_region:v.game_region,total_assets:v.total_assets,pure_coins:v.pure_coins,stamina_level:v.stamina_level,insurance_slots:v.insurance_slots,account_level:v.account_level,rank:v.rank,secret_kd:v.secret_kd,red_items:v.red_items,helmet_6:v.helmet_6,armor_6:v.armor_6,can_provide_login:v.can_provide_login==="true",deposit:v.deposit?Number(v.deposit):null,skins:v.skins,locked_items:v.locked_items,price_terms:v.price_terms,image_url:v.image_url,notes:v.notes,status:"pending"};
+ const {error}=await db.from("rental_accounts").insert(payload);
+ msg("publishStatus",error?"提交失败："+error.message:"提交成功！账号已进入管理员审核队列。请保存好填写的资料，后续修改由平台客服协助。",!!error);if(!error)e.target.reset();
+});
+loadListings();
+</script>
+</body></html>
